@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGT Project Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-gradient"></div>
+
+    <header class="glass-header">
+        <div class="container">
+            <h1>AGT Project <span class="highlight">Dashboard</span></h1>
+            <nav>
+                <button class="nav-btn active" data-filter="all">All Results</button>
+                <button class="nav-btn" data-filter="regular">Regular Graph</button>
+                <button class="nav-btn" data-filter="erdos">Erdős-Rényi</button>
+                <button class="nav-btn" data-filter="barabasi">Barabasi-Albert</button>
+                <button class="nav-btn" data-filter="coalitional">Coalitional Game</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="results-grid">
+
+            <!-- REGULAR GRAPH CARDS -->
+
+            <!-- BRD Card -->
+            <div class="card glass-card" data-category="regular">
+                <div class="card-header">
+                    <div class="badge regular">Regular Graph</div>
+                    <h3>Best Response Dynamics</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <!-- Convergence View -->
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/brd_regular_convergence.png" alt="BRD Convergence" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for BRD on a k-regular graph.</p>
+                    </div>
+
+                    <!-- Graph View -->
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/brd_regular_graph.png" alt="BRD Graph" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fictitious Play Card -->
+            <div class="card glass-card" data-category="regular">
+                <div class="card-header">
+                    <div class="badge regular">Regular Graph</div>
+                    <h3>Fictitious Play</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_regular_convergence.png" alt="Fictitious Play Convergence"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Batch Fictitious Play.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_regular_graph.png" alt="Fictitious Play Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regret Matching Card -->
+            <div class="card glass-card" data-category="regular">
+                <div class="card-header">
+                    <div class="badge regular">Regular Graph</div>
+                    <h3>Regret Matching</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/regret_matching_regular_convergence.png" alt="Regret Matching Convergence"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Regret Matching algorithm.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/regret_matching_regular_graph.png" alt="Regret Matching Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ERDOS-RENYI CARDS -->
+
+            <!-- BRD Card -->
+            <div class="card glass-card" data-category="erdos">
+                <div class="card-header">
+                    <div class="badge erdos">Erdős-Rényi</div>
+                    <h3>Best Response Dynamics</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/brd_erdos_convergence.png" alt="BRD Convergence" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for BRD on a random graph.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/brd_erdos_graph.png" alt="BRD Graph" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fictitious Play Card -->
+            <div class="card glass-card" data-category="erdos">
+                <div class="card-header">
+                    <div class="badge erdos">Erdős-Rényi</div>
+                    <h3>Fictitious Play</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_erdos_convergence.png" alt="Fictitious Play Convergence"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Batch Fictitious Play.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_erdos_graph.png" alt="Fictitious Play Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regret Matching Card -->
+            <div class="card glass-card" data-category="erdos">
+                <div class="card-header">
+                    <div class="badge erdos">Erdős-Rényi</div>
+                    <h3>Regret Matching</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/regret_matching_erdos_convergence.png" alt="Regret Matching Convergence"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Regret Matching algorithm.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/regret_matching_erdos_graph.png" alt="Regret Matching Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BARABASI-ALBERT CARDS -->
+
+            <!-- BRD Card -->
+            <div class="card glass-card" data-category="barabasi">
+                <div class="card-header">
+                    <div class="badge barabasi">Barabasi-Albert</div>
+                    <h3>Best Response Dynamics</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/brd_barabasi_convergence.png" alt="BRD Convergence" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for BRD on a scale-free graph.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/brd_barabasi_graph.png" alt="BRD Graph" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fictitious Play Card -->
+            <div class="card glass-card" data-category="barabasi">
+                <div class="card-header">
+                    <div class="badge barabasi">Barabasi-Albert</div>
+                    <h3>Fictitious Play</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_barabasi_convergence.png"
+                                alt="Fictitious Play Convergence" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Batch Fictitious Play.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/fictitious_play_barabasi_graph.png" alt="Fictitious Play Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regret Matching Card -->
+            <div class="card glass-card" data-category="barabasi">
+                <div class="card-header">
+                    <div class="badge barabasi">Barabasi-Albert</div>
+                    <h3>Regret Matching</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="conv">Convergence</button>
+                    <button class="tab-btn" data-target="graph">Graph Viz</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="conv">
+                        <div class="card-image">
+                            <img src="results/regret_matching_barabasi_convergence.png"
+                                alt="Regret Matching Convergence" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Convergence analysis for Regret Matching algorithm.</p>
+                    </div>
+
+                    <div class="view-content" data-view="graph">
+                        <div class="card-image">
+                            <img src="results/regret_matching_barabasi_graph.png" alt="Regret Matching Graph"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Visual representation of the final state (Red=Secure).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COALITIONAL GAME CARDS -->
+
+            <!-- Regular Graph Coalitional -->
+            <div class="card glass-card" data-category="coalitional">
+                <div class="card-header">
+                    <div class="badge coalitional">Coalitional</div>
+                    <h3>Regular Graph</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="heatmap">Shapley Heatmap</button>
+                    <button class="tab-btn" data-target="result">Result Set</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="heatmap">
+                        <div class="card-image">
+                            <img src="results/shapley_regular_heatmap.png" alt="Shapley Heatmap Regular" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Heatmap of Shapley Values (Importance).</p>
+                    </div>
+
+                    <div class="view-content" data-view="result">
+                        <div class="card-image">
+                            <img src="results/shapley_regular_result.png" alt="Coalitional Result Regular"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Security Set via Reverse Greedy optimization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erdos-Renyi Coalitional -->
+            <div class="card glass-card" data-category="coalitional">
+                <div class="card-header">
+                    <div class="badge coalitional">Coalitional</div>
+                    <h3>Erdős-Rényi</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="heatmap">Shapley Heatmap</button>
+                    <button class="tab-btn" data-target="result">Result Set</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="heatmap">
+                        <div class="card-image">
+                            <img src="results/shapley_erdos_heatmap.png" alt="Shapley Heatmap Erdos" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Heatmap of Shapley Values (Importance).</p>
+                    </div>
+
+                    <div class="view-content" data-view="result">
+                        <div class="card-image">
+                            <img src="results/shapley_erdos_result.png" alt="Coalitional Result Erdos" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Security Set via Reverse Greedy optimization.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barabasi-Albert Coalitional -->
+            <div class="card glass-card" data-category="coalitional">
+                <div class="card-header">
+                    <div class="badge coalitional">Coalitional</div>
+                    <h3>Barabasi-Albert</h3>
+                </div>
+
+                <div class="card-tabs">
+                    <button class="tab-btn active" data-target="heatmap">Shapley Heatmap</button>
+                    <button class="tab-btn" data-target="result">Result Set</button>
+                </div>
+
+                <div class="card-body">
+                    <div class="view-content active" data-view="heatmap">
+                        <div class="card-image">
+                            <img src="results/shapley_barabasi_heatmap.png" alt="Shapley Heatmap Barabasi"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Heatmap of Shapley Values (Importance).</p>
+                    </div>
+
+                    <div class="view-content" data-view="result">
+                        <div class="card-image">
+                            <img src="results/shapley_barabasi_result.png" alt="Coalitional Result Barabasi"
+                                loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Security Set via Reverse Greedy optimization.</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Modal for Image Preview -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImg">
+        <div id="caption"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
