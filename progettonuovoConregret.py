@@ -140,7 +140,7 @@ class FictitiousPlay:
     def run(self):
         history = []
         no_change_counter = 0
-        # La stabilità richiesta può essere abbassata se l'algoritmo è deterministico
+        # può essere abbassata se l'algoritmo è deterministico
         required_stability = self.num_players * 5 
         
         # Pre-calcolo la soglia di convenienza
@@ -347,17 +347,17 @@ if __name__ == "__main__":
     # --- Step 1: Create a k-regular Graph ---
     num_nodes = 1000 # Reduced node count for faster plot generation in example
     k = 3
-    max_iter = 5000
+    max_iter = 500
     update_fraction_fictitious = 0.2
 
     G_reg = create_regular_graph(num_nodes, k)
     game_reg = SecurityGame(G_reg, alpha=10, c=4)
-    run_and_report(game_reg, BestResponseDynamics, "Best Response Dynamics (Regular)", "brd_regular_convergence.png", max_iter)
-    run_and_report(game_reg, FictitiousPlay, "Batch Fictitious Play (Regular)", "fictitious_play_regular_convergence.png", max_iter, update_fraction=update_fraction_fictitious)
+    #run_and_report(game_reg, BestResponseDynamics, "Best Response Dynamics (Regular)", "brd_regular_convergence.png", max_iter)
+    #run_and_report(game_reg, FictitiousPlay, "Batch Fictitious Play (Regular)", "fictitious_play_regular_convergence.png", max_iter, update_fraction=update_fraction_fictitious)
     run_and_report(game_reg, RegretMatching, "Regret Matching (Regular)", "regret_matching_regular_convergence.png", max_iter)
 
     G_erdos = create_erdos_renyi(num_nodes, p=0.001)
     game_erdos = SecurityGame(G_erdos, alpha=10, c=4)
-    run_and_report(game_erdos, BestResponseDynamics, "Best Response Dynamics (Erdős-Rényi)", "brd_erdos_convergence.png", max_iter)
-    run_and_report(game_erdos, FictitiousPlay, "Batch Fictitious Play (Erdős-Rényi)", "fictitious_play_erdos_convergence.png", max_iter, update_fraction=update_fraction_fictitious)
+    #run_and_report(game_erdos, BestResponseDynamics, "Best Response Dynamics (Erdős-Rényi)", "brd_erdos_convergence.png", max_iter)
+    #run_and_report(game_erdos, FictitiousPlay, "Batch Fictitious Play (Erdős-Rényi)", "fictitious_play_erdos_convergence.png", max_iter, update_fraction=update_fraction_fictitious)
     run_and_report(game_erdos, RegretMatching, "Regret Matching (Erdős-Rényi)", "regret_matching_erdos_convergence.png", max_iter)
