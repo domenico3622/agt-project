@@ -17,7 +17,7 @@ class FictitiousPlay:
     def run(self):
         history = []
         no_change_counter = 0
-        # La stabilità richiesta può essere abbassata se l'algoritmo è deterministico
+        # può essere abbassata se l'algoritmo è deterministico
         required_stability = self.num_players * 5 
         
         # Pre-calcolo la soglia di convenienza

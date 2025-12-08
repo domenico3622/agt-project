@@ -13,8 +13,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const filterValue = btn.getAttribute('data-filter');
 
             cards.forEach(card => {
-                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-                    card.style.display = 'flex'; // Changed to flex for new layout
+                const category = card.getAttribute('data-category');
+                let shouldShow = false;
+
+                if (filterValue === 'all') {
+                    shouldShow = true;
+                } else if (filterValue === 'non-coalitional') {
+                    if (['regular', 'erdos', 'barabasi'].includes(category)) {
+                        shouldShow = true;
+                    }
+                } else if (category === filterValue) {
+                    shouldShow = true;
+                }
+
+                if (shouldShow) {
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }

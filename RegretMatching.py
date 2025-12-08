@@ -26,20 +26,25 @@ class RegretMatching:
                 u_actual = self.game.get_payoff(i, self.current_strategies)
                 
                 actual_strat = self.current_strategies[i]
-                other_strat = 1 - actual_strat
+                other_strat = 1 - actual_strat #Qual era l'altra opzione? (Se ho fatto 0, l'altra è 1. Se ho fatto 1, l'altra è 0).
                 
+                #creo una copia della partita in cui gioco l'altra mossa (strategia), 
+                #lasciando invariate le mosse degli altri giocatori
                 temp_profile = self.current_strategies.copy()
                 temp_profile[i] = other_strat
                 u_counterfactual = self.game.get_payoff(i, temp_profile)
                 
+                #calcolo il regret, se è positivo ho rimpianto per non aver giocato l'altra mossa
                 regret = u_counterfactual - u_actual
                 self.cumulative_regrets[i][other_strat] += regret
 
             for i in range(self.num_players):
+                #se il rimpianto è negativo, lo considero come 0 (non ho rimpianti a non aver giocato quella mossa)
                 r_0_pos = max(0, self.cumulative_regrets[i][0])
                 r_1_pos = max(0, self.cumulative_regrets[i][1])
                 sum_r = r_0_pos + r_1_pos
                 
+                #normalizzazione: trasformo i rimapianti in percentuali.
                 if sum_r > 0:
                     self.strategy_probs[i][0] = r_0_pos / sum_r
                     self.strategy_probs[i][1] = r_1_pos / sum_r
@@ -50,6 +55,8 @@ class RegretMatching:
         print(f"Regret Matching finished after {self.max_iterations} iterations.")
         
         final_pure_strategies = {}
+        # Trasformo le probabilità in una scelta secca.
+        # Se la probabilità di giocare 1 è maggiore del 50%, la mia strategia finale è 1. Altrimenti è 0.
         for i in range(self.num_players):
             prob_1 = self.strategy_probs[i][1]
             if prob_1 > 0.5:
