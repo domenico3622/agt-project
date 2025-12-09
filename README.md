@@ -53,8 +53,9 @@ Truthful mechanism to buy a secure path ($S \to T$).
 ## File Structure
 * `main.py`: Entry point & Orchestrator.
 * `index.html`: Visualization Dashboard.
-* `*.py`: Core logic modules.
+* `logic/`: Core logic modules.
 * `results/`: Output directory for generated plots.
+* `assets/`: Assets for the dashboard.
 
 ## Authors
 * **Di Franco Federico**

@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 import math
 import os
 
-from SecurityGame import SecurityGame
-from BestResponseDynamics import BestResponseDynamics
-from FictitiousPlay import FictitiousPlay
-from RegretMatching import RegretMatching
-from CoalitionalSecurityGame import CoalitionalSecurityGame
-from SecurityMarketplace import SecurityMarketplace
-from VCGPathAuction import VCGPathAuction
+from logic.SecurityGame import SecurityGame
+from logic.BestResponseDynamics import BestResponseDynamics
+from logic.FictitiousPlay import FictitiousPlay
+from logic.RegretMatching import RegretMatching
+from logic.CoalitionalSecurityGame import CoalitionalSecurityGame
+from logic.SecurityMarketplace import SecurityMarketplace
+from logic.VCGPathAuction import VCGPathAuction
 
 # --- FUNCTION ADDED TO PRINT CONVERGENCE ---
 def plot_convergence(history, algorithm_name, filename="convergence.png"):
