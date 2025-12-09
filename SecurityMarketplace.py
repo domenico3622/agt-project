@@ -3,8 +3,8 @@ import random
 class SecurityMarketplace:
     def __init__(self, buyers_nodes, num_vendors=5):
         """
-        Buyers: Nodi del security set con budget.
-        Vendors: Venditori con prezzo e qualità.
+        Buyers: Security set nodes with budget.
+        Vendors: Sellers with price and quality.
         """
         self.buyers = [{'id': n, 'budget': random.randint(1, 100)} for n in buyers_nodes]
         self.vendors = [{'id': v, 
@@ -13,13 +13,13 @@ class SecurityMarketplace:
                          'capacity': random.randint(20, 150)} for v in range(num_vendors)]
 
     def calculate_utility(self, buyer, vendor):
-        """Calcola Utilità: Welfare = (Sicurezza * 10) + Risparmio """
+        """Calculate Utility: Welfare = (Security * 10) + Savings """
         if buyer['budget'] < vendor['price']:
-            return -float('inf') # Incompatibile
+            return -float('inf') # Incompatible
         return (vendor['security_level'] * 10) + (buyer['budget'] - vendor['price'])
 
     def run_scenario_infinite_capacity(self):
-        """Scenario con capacità infinita: ogni buyer può matchare con il vendor che massimizza la sua utilità"""
+        """Infinite capacity scenario: each buyer can match with the vendor maximizing their utility"""
         matches = []
         total_welfare = 0
         
@@ -27,7 +27,7 @@ class SecurityMarketplace:
             best_vendor = None
             best_utility = -float('inf')
             
-            # Trova il vendor che massimizza l'utilità per questo buyer
+            # Find the vendor maximizing utility for this buyer
             for vendor in self.vendors:
                 util = self.calculate_utility(buyer, vendor)
                 if util > best_utility:
@@ -43,7 +43,7 @@ class SecurityMarketplace:
         return matches, total_welfare
     
     def run_scenario_limited_capacity(self):
-        """Scenario con capacità limitata (Greedy Global Maximization) """
+        """Limited capacity scenario (Greedy Global Maximization) """
         possible_matches = []
         for buyer in self.buyers:
             for vendor in self.vendors:
@@ -51,7 +51,7 @@ class SecurityMarketplace:
                 if util > -float('inf'):
                     possible_matches.append({'buyer': buyer, 'vendor': vendor, 'util': util})
         
-        # Ordiniamo per utilità per massimizzare il welfare sociale 
+        # Sort by utility to maximize social welfare 
         possible_matches.sort(key=lambda x: x['util'], reverse=True)
         
         matches = []
@@ -71,7 +71,7 @@ class SecurityMarketplace:
                 total_welfare += m['util']
                 matches.append((b_id, v_id, m['util']))
         
-        # Aggiungiamo i non matchati
+        # Add unmatched
         for buyer in self.buyers:
             if buyer['id'] not in matched_buyers:
                 matches.append((buyer['id'], None, 0))

@@ -7,21 +7,21 @@ class CoalitionalSecurityGame:
         self.nodes = list(graph.nodes())
         self.num_nodes = len(self.nodes)
         
-        # Pre-calcoliamo il grado (numero di vicini necessari) per ogni nodo
+        # We precalculate the degree (number of neighbors needed) for each node
         self.degrees = {n: len(list(graph.neighbors(n))) for n in self.nodes}
         self.neighbors_map = {n: list(graph.neighbors(n)) for n in self.nodes}
 
     def calculate_shapley_monte_carlo(self, num_permutations=1000):
         """
-        Shapley Values per Regola ALL (Strict Cooperative Game).
-        
-        Logica del Contributo Marginale con regola ALL:
-        Quando aggiungo il nodo U alla coalizione S, U genera valore (+1) se:
-        1. U diventa sicuro (perché entra in S).
-        2. Un vicino V diventa sicuro GRAZIE a U.
-           - V non è in S.
-           - V aveva bisogno di TUTTI i vicini in S.
-           - U era l'ultimo vicino mancante per completare la protezione di V.
+        Shapley Values​ ​for the ALL Rule (Strict Cooperative Game).
+
+        Marginal Contribution Logic with the ALL rule:
+        When I add node U to coalition S, U generates a value (+1) if:
+            1. U becomes safe (because it enters S).
+            2. A neighbor V becomes safe THANKS to U.
+                - V is not in S.
+                - V needed ALL neighbors in S.
+                - U was the last neighbor missing to complete V's protection.
         """
         shapley_values = {node: 0.0 for node in self.nodes}
         
@@ -29,55 +29,55 @@ class CoalitionalSecurityGame:
             perm = list(self.nodes)
             random.shuffle(perm)
             
-            # Stato della simulazione per questa permutazione
-            nodes_in_S = set()           # Nodi entrati nella coalizione
-            is_secured = {n: False for n in self.nodes} # Chi è sicuro?
+            # Simulation state for this permutation
+            nodes_in_S = set()           # Nodes entered into the coalition
+            is_secured = {n: False for n in self.nodes} # Who is secure?
             
-            # Contatore: quanti vicini di V sono attualmente in S?
+            # Counter: how many neighbors of V are currently in S?
             current_neighbors_in_S = {n: 0 for n in self.nodes}
             
             for node in perm:
                 marginal_contribution = 0
                 
-                # 1. Contributo Diretto: Il nodo stesso diventa sicuro entrando in S
-                # (Se non lo era già, ma con regola ALL è impossibile essere sicuri da fuori 
-                # a meno che la permutazione non abbia già inserito tutti i vicini. 
-                # Controlliamo per rigore).
+                # 1. Direct Contribution: The node itself becomes secure by entering S
+                # (If it wasn't already, but with the ALL rule it is impossible to be secure from outside 
+                # unless the permutation has already inserted all neighbors. 
+                # Checking for rigor).
                 if not is_secured[node]:
                     is_secured[node] = True
                     marginal_contribution += 1
                 
-                # Aggiungiamo il nodo alla coalizione
+                # Add the node to the coalition
                 nodes_in_S.add(node)
                 
-                # 2. Contributo Indiretto: Aiuto i vicini a completare la loro copertura?
+                # 2. Indirect Contribution: Do I help neighbors complete their coverage?
                 for neighbor in self.neighbors_map[node]:
-                    # Segnaliamo al vicino che 'node' è arrivato
+                    # Signal to the neighbor that 'node' has arrived
                     current_neighbors_in_S[neighbor] += 1
                     
-                    # Controllo CRUCIALE Regola ALL:
-                    # Il vicino 'neighbor' diventa sicuro ORA grazie a me?
-                    # Condizioni:
-                    # A. Non deve essere già sicuro (es. non deve essere in S).
-                    # B. Deve aver raggiunto la quota piena di vicini (TUTTI presenti).
+                    # CRUCIAL Check ALL Rule:
+                    # Does the neighbor 'neighbor' become secure NOW thanks to me?
+                    # Conditions:
+                    # A. Must not be already secure (e.g. must not be in S).
+                    # B. Must have reached the full quota of neighbors (ALL present).
                     
                     if not is_secured[neighbor]:
-                        # Ho completato la sua lista di vicini?
+                        # Have I completed its list of neighbors?
                         if current_neighbors_in_S[neighbor] == self.degrees[neighbor]:
-                            # BINGO! Ero l'ultimo pezzo mancante.
-                            # Il vicino ora è coperto dai suoi vicini.
+                            # I was the last missing piece.
+                            # The neighbor is now covered by its neighbors.
                             is_secured[neighbor] = True
                             marginal_contribution += 1
                             
-                # Registro il contributo
+                # Register the contribution
                 shapley_values[node] += marginal_contribution
                 
-                # Stop anticipato se tutti sicuri
+                # Early stop if all are secure
                 if len(nodes_in_S) == self.num_nodes: 
-                    # Nota: con regola ALL spesso serve tutto il set, quindi questo break scatta tardi
+                    # With ALL rule often the whole set is needed, so this break triggers late
                     break
                     
-        # Media
+        # Average
         for node in shapley_values:
             shapley_values[node] /= num_permutations
             
@@ -85,18 +85,18 @@ class CoalitionalSecurityGame:
 
     def build_security_set_from_shapley(self, shapley_values):
         """
-        Costruzione "Reverse Greedy" guidata da Shapley.
-        Invece di aggiungere i migliori (che fallisce con regola ALL),
-        partiamo dal set completo e rimuoviamo i peggiori (basso Shapley).
+        "Reverse Greedy" construction guided by Shapley.
+        Instead of adding the best ones (which fails with ALL rule),
+        we start from the complete set and remove the worst ones (low Shapley).
         """
-        # 1. Partiamo dal set TOTALE (Tutti i nodi accesi)
+        # 1. Start from the TOTAL set (All nodes on)
         security_set = set(self.nodes)
         
-        # 2. Ordiniamo i nodi per Shapley CRESCENTE (dal più "inutile" al più "prezioso")
+        # 2. Sort nodes by Shapley ASCENDING (from most "useless" to most "precious")
         sorted_nodes_ascending = sorted(shapley_values, key=shapley_values.get)
         
         
-        # 3. Ciclo di Rimozione (Pruning Intelligente)
+        # 3. Removal Cycle (Smart Pruning)
         for node in sorted_nodes_ascending:
             neighbors = self.neighbors_map[node]
 

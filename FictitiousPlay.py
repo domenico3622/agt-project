@@ -17,11 +17,11 @@ class FictitiousPlay:
     def run(self):
         history = []
         no_change_counter = 0
-        # può essere abbassata se l'algoritmo è deterministico
+        # can be lowered if the algorithm is deterministic
         required_stability = self.num_players * 5 
         
-        # Pre-calcolo la soglia di convenienza
-        # Se la probabilità di essere coperti supera questa soglia, conviene giocare 0.
+        # Pre-calculate the convenience threshold
+        # If the probability of being covered exceeds this threshold, it is better to play 0.
         threshold = (self.game.alpha - self.game.c) / self.game.alpha
 
         for t in range(self.max_iterations):
@@ -30,64 +30,64 @@ class FictitiousPlay:
             
             changed = False
             
-            # Selezione batch dei nodi
+            # Batch node selection
             num_to_update = max(1, int(self.num_players * self.update_fraction))
             nodes_to_update = random.sample(range(self.num_players), num_to_update)
             
-            # Fase 1: Aggiornamento delle credenze (Belief Update)
-            # Nota: In Asynchronous FP, spesso si aggiornano le credenze solo quando si viene attivati,
-            # oppure si aggiornano globalmente. Qui manteniamo la tua logica:
-            # aggiorniamo i conteggi solo per i nodi che "pensano" in questo turno.
+            # Phase 1: Belief Update
+            # In Asynchronous FP, beliefs are often updated only when activated,
+            # or updated globally. Here we keep your logic:
+            # we update counts only for nodes that "think" in this turn.
             for i in nodes_to_update:
                 self.total_counts[i] += 1
                 for v in self.graph.neighbors(i):
                     if self.current_strategies[v] == 1:
                         self.neighbor_counts[i][v] += 1
 
-            # Fase 2: Calcolo Best Response
+            # Phase 2: Calculate Best Response
             for i in nodes_to_update:
                 neighbors = list(self.graph.neighbors(i))
                 old_strategy = self.current_strategies[i]
                 new_strategy = old_strategy
 
                 if not neighbors:
-                    # Se non ho vicini, non posso essere coperto -> Devo giocare 1
+                    # If I have no neighbors, I cannot be covered -> I must play 1
                     new_strategy = 1
                 else:
-                    # Calcolo le probabilità empiriche che ogni vicino giochi 1
+                    # Calculate empirical probabilities that each neighbor plays 1
                     probs = []
                     for v in neighbors:
                         if self.total_counts[i] > 0:
                             p = self.neighbor_counts[i][v] / self.total_counts[i]
                         else:
-                            p = 0.5 # Prior uniforme se prima iterazione
+                            p = 0.5 # Uniform prior if first iteration
                         probs.append(p)
                     
-                    # Calcolo Probabilità Congiunta (PRODOTTO, non media)
+                    # Calculate Joint Probability (PRODUCT, not average)
                     prob_all_neighbors_1 = math.prod(probs)
                     
                     
-                    # --- BEST RESPONSE DETERMINISTICA ---
-                    # Se la probabilità che tutti mi coprano è alta, rischio e gioco 0.
-                    # Altrimenti, mi proteggo e gioco 1.
+                    # --- DETERMINISTIC BEST RESPONSE ---
+                    # If the probability that everyone covers me is high, I risk and play 0.
+                    # Otherwise, I protect myself and play 1.
                     if prob_all_neighbors_1 > threshold:
                         new_strategy = 0
                     else:
                         new_strategy = 1
                     """
-                    # --- BEST RESPONSE STOCASTICA ---
+                    # --- STOCHASTIC BEST RESPONSE ---
                     if random.random() <= prob_all_neighbors_1:
                         new_strategy = 0
                     else:
                         new_strategy = 1
                     """
 
-                # Applica il cambiamento
+                # Apply the change
                 if new_strategy != old_strategy:
                     self.current_strategies[i] = new_strategy
                     changed = True
             
-            # Controllo convergenza
+            # Convergence check
             if not changed:
                 no_change_counter += 1
             else:

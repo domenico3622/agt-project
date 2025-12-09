@@ -12,10 +12,10 @@ class BestResponseDynamics:
 
     def run(self):
         equilibrium_strategies = None
-        history = [] # NEW: Track convergence
+        history = [] # Track convergence
         
         for iteration in range(self.max_iterations):
-            # NEW: Record current set size
+            # Record current set size
             history.append(sum(self.current_strategies.values()))
 
             previous_strategies = self.current_strategies.copy()
@@ -55,4 +55,4 @@ class BestResponseDynamics:
         is_pne = self.game.is_nash_equilibrium(equilibrium_strategies)
         print(f"Is this a Pure Nash Equilibrium? {is_pne}")
         
-        return equilibrium_strategies, is_pne, history # NEW: Return history
+        return equilibrium_strategies, is_pne, history # Return history
