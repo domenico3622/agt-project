@@ -134,9 +134,6 @@ def plot_market_allocation(buyers, vendors, matches, output_path, title):
     ax1.set_xticks(bins) 
     ax1.legend()
     # --- End Subplot 1 ---
-
-    
-    # --- MODIFY Subplot 2: Replaced with Bubble Chart ---
     
     # 1. Collect data for each vendor
     vendor_data = {v['id']: {
@@ -156,15 +153,15 @@ def plot_market_allocation(buyers, vendors, matches, output_path, title):
     security_levels = [d['security_level'] for d in vendor_data.values()]
     sales_counts = [d['sales_count'] for d in vendor_data.values()]
     
-    # Calcola l'utilità media, gestendo la divisione per zero se un vendor non vende nulla
+    # Calculate the average utility, handling division by zero if a vendor sells nothing
     avg_utilities = [
         (d['utility_sum'] / d['sales_count']) if d['sales_count'] > 0 else 0 
         for d in vendor_data.values()
     ]
     
-    # 3. Disegna il Bubble Chart
-    # La dimensione 's' è scalata per leggibilità (es. vendite^2 * 10)
-    sizes = [(s**1.5 * 20) + 10 for s in sales_counts] # +10 per vedere anche chi non vende
+    # 3. Draw the Bubble Chart
+    # The 's' size is scaled for readability (e.g. sales^2 * 10)
+    sizes = [(s**1.5 * 20) + 10 for s in sales_counts] # +10 to see who doesn't sell
     
     scatter = ax2.scatter(prices, security_levels, s=sizes, c=avg_utilities, 
                           cmap='viridis', alpha=0.7, edgecolors='black')
@@ -184,7 +181,6 @@ def plot_market_allocation(buyers, vendors, matches, output_path, title):
     ax2.grid(True, alpha=0.3)
     ax2.set_ylim(0, 11) # Limits for security level 1-10
     ax2.set_xlim(0, 101) # Limits for price 1-100
-    # --- End Modification Subplot 2 ---
     
     plt.tight_layout(rect=[0, 0.03, 1, 0.95]) # Adjust for general title
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
@@ -231,10 +227,8 @@ def visualize_vcg_path(graph, security_set, optimal_path, source, target, output
     path_edges = [(optimal_path[i], optimal_path[i+1]) for i in range(len(optimal_path)-1)]
     path_nodes = list(optimal_path)
     
-    # --- KEY MODIFICATION ---
     # Construct path color list IN THE SAME ORDER as path_nodes
     path_node_colors = [node_color_map[node] for node in path_nodes]
-    # --- End Modification ---
     
     # Redraw only path nodes (opaque)
     nx.draw_networkx_nodes(graph, pos, nodelist=path_nodes, node_color=path_node_colors, node_size=700, alpha=1.0, 
@@ -258,10 +252,10 @@ def run_vcg_auction(graph, security_set, network_name, output_dir="results"):
     print(f"\n[TASK 4] VCG PATH AUCTION - {network_name}")
     print("-" * 70)
     
-    # Select random Source and Target (ensuring they are different)
+    # Select random Source and Target
     nodes_list = list(graph.nodes())
     if len(nodes_list) < 2:
-        print("Grafo troppo piccolo per VCG.")
+        print("Graph too small for VCG.")
         return
 
     source = random.choice(nodes_list)
