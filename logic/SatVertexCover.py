@@ -9,133 +9,116 @@ class SatVertexCover:
         self.graph = graph
         self.nodes = list(graph.nodes())
         self.n = len(self.nodes)
-        # Create a symbol for each node: True if node is in Vertex Cover
+        # Crea un simbolo (variabile logica) per ogni nodo:
+        # True se il nodo fa parte del Vertex Cover, False altrimenti.
         self.node_vars = {node: symbols(f'x_{node}') for node in self.nodes}
 
     def _encode_vertex_cover_constraint(self):
         """
-        Constraint 1: For every edge (u, v), at least one endpoint must be in the cover.
-        (x_u OR x_v)
+        Vincolo 1: Copertura degli Archi.
+        Per ogni arco (u, v) del grafo, almeno uno dei due estremi deve essere scelto.
+        Logica: (x_u OR x_v) deve essere VERO per ogni arco.
         """
         clauses = []
         for u, v in self.graph.edges():
             clauses.append(Or(self.node_vars[u], self.node_vars[v]))
         return And(*clauses)
 
-    def _encode_at_most_k_naive(self, k):
-        """
-        Naive encoding for AtMostK is combinatorial (n choose k+1) clauses.
-        Too slow for n > 20. Sticking to sequential counter or similar is better,
-        but for sympy which handles general expressions, we can try to be clever or just rely on a simpler counting network.
-        
-        Actually, for 'symbolic' focus, let's use a bit counter (adder) constraint 
-        or simply use the 'Sequential Counter' encoding which is O(n*k) variables.
-        """
-        if k >= self.n:
-            return sympy.true
-        if k < 0:
-            return sympy.false
-
-        # Sequential Counter Encoding (Sinze, 2005)
-        # s_{i, j} is true if the sum of x_1...x_i is >= j (or similar, definitions vary)
-        # Let's use: R_{i, j} means "sum of first i variables is >= j"
-        # We want to forbid current sum > k. 
-        
-        # Variables: x_1 to x_n (mapped from self.node_vars)
-        # Aux vars: s_{i, j} for 1 <= i <= n-1, 1 <= j <= k
-        
-        # Using a slightly easier version for implementation:
-        # Sum inputs <= k.
-        
-        # Let's use a simpler recursive definition supported by SymPy if possible? 
-        # No, SymPy SAT solver works best with CNF-like structures.
-        
-        # Let's implement the standard Sequential Counter to be safe and "algorithmic".
-        # Variables s_{i,j}: sum of first i vars is at least j.
-        
-        # Optimization: We only need to check if count > k.
-        
-        # Let's map nodes to 0..n-1 indices
-        x = [self.node_vars[self.nodes[i]] for i in range(self.n)]
-        
-        # auxiliary variables s[i][j] : "Sum of x_0...x_i is >= j"
-        # We need j up to k+1 to detect overflow.
-        # If s[n-1][k+1] is true, then we have > k, which is invalid.
-        
-        # Wait, if we want "At Most K", we want to FORBID "At Least K+1".
-        # So we need to encode "Count(x) >= K+1" and negate it? 
-        # Or just encode "Count(x) <= K" directly.
-        
-        # Let's use the standard "S_{i,j} <-> Sum(x_1...x_i) >= j" encoding.
-        # Then we enforce NOT S_{n, k+1}.
-        
-        s = {}
-        clauses = []
-        
-        # Range of i: 0 to n-1
-        # Range of j: 1 to k+1
-        
-        for i in range(self.n):
-            for j in range(1, k + 2):
-                s[(i, j)] = symbols(f's_{i}_{j}')
-
-        # Base case for x_0
-        # s_{0,1} <-> x_0
-        clauses.append(Equivalent(s[(0, 1)], x[0]))
-        # s_{0,j} is false for j > 1
-        for j in range(2, k + 2):
-            clauses.append(Not(s[(0, j)]))
-
-        # Recursive step
-        for i in range(1, self.n):
-            for j in range(1, k + 2):
-                # s_{i, j} <-> (s_{i-1, j} OR (s_{i-1, j-1} AND x_i))
-                # Note: s_{i-1, 0} is essentially "sum >= 0", which is True.
-                
-                term1 = s[(i-1, j)]
-                if j == 1:
-                    term2 = x[i] # effectively (True AND x_i)
-                else:
-                    term2 = And(s[(i-1, j-1)], x[i])
-                
-                clauses.append(Equivalent(s[(i, j)], Or(term1, term2)))
-
-        # Constraint: The sum must NOT be >= k+1
-        # So NOT s_{n-1, k+1}
-        clauses.append(Not(s[(self.n - 1, k + 1)]))
-
-        return And(*clauses)
-
     def get_at_most_k_formula(self, k):
-        # Implementation of Sequential Counter directly using And/Or/Not
-        # Variable: s_i_j is True if sum(x_0...x_i) >= j
+        """
+        Genera la formula logica per il vincolo di cardinalità: "La somma dei nodi scelti deve essere <= k".
+        Usa la tecnica "Sequential Counter" (contatore sequenziale). In quanto in logica booleana non esiste 
+        l'operazione di somma, si utilizza un contatore sequenziale per contare il numero di nodi scelti.  
         
+        Non possiamo contare non avendo numeri (1, 2, 3...), ma abbiamo a disposizione solo degli interruttori (ACCESO/SPENTO) 
+        e dobbiamo tenere traccia del punteggio di una partita. Il Contatore Sequenziale (Sequential Counter) è un modo per 
+        costruire un "contatore" usando solo la logica. Ecco come funziona, spiegato con un esempio pratico.
+        L'Obiettivo:
+        Hai 3 lampadine (x_1, x_2, x_3). Voglio sapere se almeno 2 sono accese. Il computer non sa fare 1+0+1=2. Deve 
+        arrivarci passo dopo passo. 
+        Il "Contatore" (Le variabili S)
+        Il contatore crea una griglia di registri (variabili temporanee chiamate S). Ogni registro S_{i,j} risponde a una 
+        domanda specifica: "Arrivato alla lampadina i, ne ho trovate accese almeno j?"
+        - i --> A che punto sono della fila (lampadina 1, 2 o 3).
+        - j --> Il totale che sto controllando (totale 1, totale 2...).
+        Esempio Passo-Passo: Immaginiamo che le tue lampadine siano:
+        - x_1: ACCESA (1)   
+        - x_2: SPENTA (0)
+        - x_3: ACCESA (1)
+        Vediamo come si riempiono i registri del contatore sequenziale.
+        1. Guardo la prima lampadina (x_1 = 1)
+        - Domanda: Ho trovato almeno 1 lampadina accesa?
+            - SÌ, perché x_1 è accesa. (Quindi il registro S_{1,1} diventa VERO).
+        - Domanda: Ho trovato almeno 2 lampadine accese?
+            - NO, ne ho vista solo una finora. (Quindi il registro S_{1,2} è FALSO).
+
+        2. Passo alla seconda lampadina (x_2 = 0)
+        Il contatore deve aggiornare i totali basandosi su quello che sapeva prima PIÙ la nuova lampadina.
+        - Domanda: Ho trovato almeno 1 accesa finora? 
+            - Il computer ragiona così: "O ne avevo già 1 prima, OPPURE ne avevo 0 prima e questa è accesa".
+            - Ne avevo 1 prima? SÌ. Risultato: SÌ (il totale 1 "si conserva").
+        - Domanda: Ho trovato almeno 2 accese finora?
+            - Il computer ragiona: "O ne avevo già 2 prima, OPPURE ne avevo 1 prima e questa è accesa".
+            - Ne avevo 2 prima? NO.
+            - Ne avevo 1 prima (S_{1,1} era Vero) E questa (x_2) è accesa? NO, perché x_2 è spenta.
+            - Risultato: NO (Restiamo fermi a 1).
+
+        3. Passo alla terza lampadina (x_3 = 1)
+        - Domanda: Ho trovato almeno 1 accesa?
+            - Sì, lo sapevo già da prima. Resta SÌ.
+        - Domanda: Ho trovato almeno 2 accese? 
+            - Il ragionamento logico: "O ne avevo già 2 prima (S_{2,2}), OPPURE ne avevo almeno 1 prima (S_{2,1}) E la 
+            lampadina attuale (x_3) è accesa".
+            - Analisi:
+                - Avevo già 2? No.
+                - Avevo 1? SÌ. 
+                - La x_3 è accesa? SÌ.
+                - Quindi: SÌ + SÌ = Ho raggiunto quota 2!
+                - Risultato: SÌ (S_{3,2} diventa VERO).
+        
+        La Regola Logica (La Formula):
+        Ecco spiegata la formula complessa nel codice:S[i][j] = S[i-1][j] OR (S[i-1][j-1] AND x[i]) 
+        Il totale attuale raggiunge quota J se:
+            Caso A: Avevo già raggiunto quota J al passaggio precedente (non ho bisogno della lampadina attuale, ho già "vinto").
+            OPPURE (OR)
+            Caso B: Ero arrivato a quota J-1 (mi mancava 1) E (AND) la lampadina attuale mi dà proprio quel punto che mancava.
+        
+        Come faccio per dire "Al Massimo K"?
+        Se voglio imporre che ci siano al massimo 2 lampadine accese (K=2), faccio tutto questo calcolo e alla fine guardo il registro 
+        per il totale 3 (K+1). Se il registro "Ho trovato almeno 3 lampadine" (S_{n, 3}) si accende, significa che ho sforato.
+        Quindi, la regola finale che do al SAT Solver è: NON (S_{n, 3}).
+        In pratica: "Faccio tutte le combinazioni che vuoglio, ma assicurati che la casella del totale 3 rimanga SPENTA".
+        """
+    
+        # Se k è maggiore o uguale a n, il vincolo è sempre soddisfatto (banale).
         if k >= self.n:
             return sympy.true
         
+        # Mappa i nodi in una lista ordinata x_0, x_1, ...
         x = [self.node_vars[self.nodes[i]] for i in range(self.n)]
         
-        # We need auxiliary variables. 
-        # To avoid name collisions, let's store them in valid python vars
-        # s[i][j]
+        # Variabili ausiliarie s[i][j]: indicano se "la somma dei primi i+1 variabili raggiunge almeno j".
+        # Abbiamo bisogno di controllare fino a k+1 per rilevare se superiamo k.
         s = [[None for _ in range(k + 2)] for _ in range(self.n)]
         
-        aux_vars_defs = []
-        
-        # Create symbols
+        # Creazione dei simboli per le variabili ausiliarie
         for i in range(self.n):
             for j in range(1, k + 2):
                 s[i][j] = symbols(f's_{i}_{j}')
 
         constraints = []
 
-        # i = 0
-        # s[0][1] <-> x[0]
+        # Caso Base (i = 0):
+        # s[0][1] è vero se e solo se x[0] è vero.
         constraints.append( Equivalent(s[0][1], x[0]) )
+        # s[0][j] per j > 1 è impossibile (non posso avere somma > 1 con un solo elemento).
         for j in range(2, k + 2):
             constraints.append( Not(s[0][j]) )
 
-        # i > 0
+        # Passo Ricorsivo (i > 0):
+        # La somma parziale al passo i raggiunge j se:
+        # 1. Raggiungeva j già al passo i-1 (senza contare x[i]).
+        # 2. Raggiungeva j-1 al passo i-1 E x[i] è vero (quindi aggiungo 1).
         for i in range(1, self.n):
             for j in range(1, k + 2):
                 # s[i][j] <-> s[i-1][j] OR (s[i-1][j-1] AND x[i])
@@ -147,48 +130,66 @@ class SatVertexCover:
                 
                 constraints.append( Equivalent(s[i][j], Or(prev_same, prev_minus)) )
 
-        # Final constraint: NOT s[n-1][k+1]
+        # Vincolo Finale:
+        # NON deve essere vero che la somma totale raggiunga k+1.
+        # Se s[n-1][k+1] fosse vero, avremmo scelto più di k nodi, violando il vincolo.
         constraints.append( Not(s[self.n - 1][k + 1]) )
         
         return And(*constraints)
 
     def solve(self):
         """
-        Finds the Minimum Vertex Cover using Binary Search on k.
+        Questa è la funzione che esegue la ricerca della soluzione ottima.
+        Il problema chiede il Minimum Vertex Cover. Per trovarlo, usa la Ricerca Binaria sul numero k (da 0 a N).
+        
+        Ciclo while low <= high:
+        1. Sceglie un numero medio mid.
+        2. Costruisce la formula completa:
+           - base_formula: Gli archi devono essere coperti.
+           - cardinalità_formula: Devo usare al massimo mid nodi.
+           - full_formula: And(base_formula, cardinalità_formula).
+        3. satisfiable(full_formula): Chiede a sympy se esiste un modo per rendere vera questa formula.
+        
+        - Se SAT (trovata soluzione): Significa che è possibile coprire il grafo con mid nodi. 
+          Ottimo! Ma forse si può fare con meno. Quindi salva la soluzione e prova con un k più basso 
+          (high = mid - 1).
+        
+        - Se UNSAT (impossibile): Significa che mid nodi sono troppo pochi. 
+          Bisogna alzare il tiro (low = mid + 1).
+          
+        Alla fine, restituisce l'insieme di nodi (min_cover) corrispondente alla soluzione più piccola trovata.
         """
-        # Upper bound: Total nodes (trivial VC)
-        # Lower bound: 0
+        # Limite superiore: Tutti i nodi (banalmente una copertura valida)
+        # Limite inferiore: 0
         low = 0
         high = self.n
         min_cover = None
         
-        # 1. Base Constraints (Edge Coverage)
+        # 1. Formula Base (Gli archi devono sempre essere coperti)
         base_formula = self._encode_vertex_cover_constraint()
         
-        # Optimization: Check if graph is empty
+        # Ottimizzazione: Se il grafo non ha nodi, ritorna vuoto
         if self.n == 0:
             return set()
             
-        print(f"SAT Solver: Finding exact MVC for graph with {self.n} nodes. Constraints: {self.graph.number_of_edges()} edges.")
+        print(f"SAT Solver: Cerco MVC esatto per grafo con {self.n} nodi. Vincoli: {self.graph.number_of_edges()} archi.")
         
-        # Binary Search
+        # Ricerca binaria
         while low <= high:
             mid = (low + high) // 2
-            print(f"  Checking k={mid}...", end='', flush=True)
+            print(f"  Testo k={mid}...", end='', flush=True)
             
-            # Construct formula: VC_Constraint AND AtMostK(mid)
-            # Re-generating cardinality formula each time is fine.
+            # Costruisco la formula: (Copertura Archi) AND (Somma Nodi <= mid)
             cardinality_formula = self.get_at_most_k_formula(mid)
             full_formula = And(base_formula, cardinality_formula)
             
-            # SymPy solve
-            # Note: satisfiable can be slow. 
+            # Chiamo il solver SymPy logic
             model = satisfiable(full_formula)
             
             if model:
-                print(" SAT")
-                # Found a cover of size mid. Try smaller.
-                # Extract solution to ensure we have a valid set to return
+                print(" SAT (Possibile)")
+                # Ho trovato una copertura grande 'mid'.
+                # Salvo i nodi trovati nel modello.
                 current_cover = set()
                 for node in self.nodes:
                     sym = self.node_vars[node]
@@ -196,27 +197,30 @@ class SatVertexCover:
                         current_cover.add(node)
                 
                 min_cover = current_cover
+                # Provo a vedere se esiste una soluzione più piccola
                 high = mid - 1
             else:
-                print(" UNSAT")
-                # Need larger k
+                print(" UNSAT (Impossibile)")
+                # 'mid' nodi non bastano, ne servono di più
                 low = mid + 1
         
         return min_cover
 
 def Equivalent(a, b):
-    # Helper because sympy.Equivalent might not be directly exposed or behaves differently in some versions
+    # Funzione Helper: Implementa l'equivalenza logica (A <-> B)
+    # SymPy potrebbe non avere Equivalent esposto direttamente in modo semplice per logic.
+    # A <-> B è equivalente a (A -> B) AND (B -> A), oppure (A AND B) OR (NOT A AND NOT B).
     return And(Or(Not(a), b), Or(Not(b), a))
 
 if __name__ == "__main__":
-    # Simple Test
+    # Test Semplice
     g = nx.Graph()
     g.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)])
-    # This is a square with one diagonal. 
-    # Nodes: 1,2,3,4.
-    # MVC should be size 2? {1, 3} covers (1,2),(1,4),(1,3),(2,3),(3,4). Yes.
-    # {2,4} also covers.
+    # Questo è un quadrato con una diagonale (1-3).
+    # Nodi: 1, 2, 3, 4.
+    # Un Minimum Vertex Cover dovrebbe essere di taglia 2. 
+    # Esempio: {1, 3} copre (1,2), (1,4), (1,3), (2,3), (3,4). Corretto.
     
     solver = SatVertexCover(g)
     result = solver.solve()
-    print("Found MVC:", result)
+    print("MVC Trovato:", result)
