@@ -16,6 +16,7 @@ from logic.RegretMatching import RegretMatching
 from logic.CoalitionalSecurityGame import CoalitionalSecurityGame
 from logic.SecurityMarketplace import SecurityMarketplace
 from logic.VCGPathAuction import VCGPathAuction
+from logic.SatVertexCover import SatVertexCover
 
 # --- FUNCTION ADDED TO PRINT CONVERGENCE ---
 def plot_convergence(history, algorithm_name, filename="convergence.png"):
@@ -289,6 +290,47 @@ def run_vcg_auction(graph, security_set, network_name, output_dir="results"):
         f"VCG Optimal Path - {network_name}"
     )
 
+# --- FUNCTION ADDED FOR SAT EXACT SOLVER (TASK 1.b) ---
+def run_sat_exact_cover(graph, network_name, output_dir="results"):
+    print(f"\n[TASK 1.b] EXACT MINIMUM VERTEX COVER (SAT / SYMBOLIC) - {network_name}")
+    print("-" * 70)
+    
+    # Check graph size to avoid hanging
+    if graph.number_of_nodes() > 50:
+        print(f"Graph too large ({graph.number_of_nodes()} nodes) for Symbolic SAT solver in pure Python.")
+        print("Skipping Exact SAT to prevent timeout. (Try with easier parameters)")
+        # Create a subgraph for demonstration if large
+        print("Running on a smaller subgraph of 15 nodes for demonstration...")
+        nodes = list(graph.nodes())[:15]
+        subgraph = graph.subgraph(nodes)
+        solver = SatVertexCover(subgraph)
+        graph_to_use = subgraph
+        suffix = "_subgraph"
+    else:
+        solver = SatVertexCover(graph)
+        graph_to_use = graph
+        suffix = ""
+
+    import time
+    start_time = time.time()
+    mvc_set = solver.solve()
+    end_time = time.time()
+    
+    print(f"Exact Minimum Vertex Cover found: Size {len(mvc_set)}")
+    print(f"Nodes: {mvc_set}")
+    print(f"Time Taken: {end_time - start_time:.4f} seconds")
+    
+    # Convert to strategies map for visualization
+    strategies = {n: (1 if n in mvc_set else 0) for n in graph_to_use.nodes()}
+    
+    visualize_graph(
+        graph_to_use, strategies, 
+        f"Exact SAT MVC (Size {len(mvc_set)})", 
+        f"{output_dir}/{network_name}_sat_exact{suffix}.png"
+    )
+    
+    return mvc_set
+
 # --- Validation Functions ---
 def is_security_set(graph, security_set):
     if not security_set: 
@@ -434,7 +476,7 @@ if __name__ == "__main__":
     # Ensure results directory exists
     os.makedirs("results", exist_ok=True)
 
-    num_nodes = 200
+    num_nodes = 20
     k = 3
     max_iter = 100
     update_fraction_fictitious = 0.2
@@ -447,6 +489,7 @@ if __name__ == "__main__":
     security_set_reg = run_coalitional_game(G_reg, "Regular", "results/shapley_regular_heatmap.png", "results/shapley_regular_result.png")
     run_market_simulation(security_set_reg, "Regular")
     run_vcg_auction(G_reg, security_set_reg, "Regular")
+    run_sat_exact_cover(G_reg, "Regular")
 
     G_erdos = create_erdos_renyi(num_nodes, p=0.05)
     game_erdos = SecurityGame(G_erdos, alpha=10, c=4)
@@ -456,6 +499,7 @@ if __name__ == "__main__":
     security_set_erdos = run_coalitional_game(G_erdos, "Erdős-Rényi", "results/shapley_erdos_heatmap.png", "results/shapley_erdos_result.png")
     run_market_simulation(security_set_erdos, "Erdos_Renyi")
     run_vcg_auction(G_erdos, security_set_erdos, "Erdos_Renyi")
+    run_sat_exact_cover(G_erdos, "Erdos_Renyi")
 
     G_ba = create_barabasi_albert(num_nodes, m=2)
     game_ba = SecurityGame(G_ba, alpha=10, c=4)
@@ -465,3 +509,4 @@ if __name__ == "__main__":
     security_set_ba = run_coalitional_game(G_ba, "Barabasi-Albert", "results/shapley_barabasi_heatmap.png", "results/shapley_barabasi_result.png")
     run_market_simulation(security_set_ba, "Barabasi_Albert")
     run_vcg_auction(G_ba, security_set_ba, "Barabasi_Albert")
+    run_sat_exact_cover(G_ba, "Barabasi_Albert")
