@@ -8,6 +8,9 @@ import random
 import matplotlib.pyplot as plt
 import math
 import os
+import time
+from matplotlib.lines import Line2D
+
 
 from logic.SecurityGame import SecurityGame
 from logic.BestResponseDynamics import BestResponseDynamics
@@ -67,7 +70,6 @@ def visualize_graph(graph, strategies, algorithm_name, filename="graph_viz.png")
             width=0.5)
             
     # Custom legend
-    from matplotlib.lines import Line2D
     legend_elements = [
         Line2D([0], [0], marker='o', color='w', label='Security Set (1)', markerfacecolor='#FF6B6B', markersize=10),
         Line2D([0], [0], marker='o', color='w', label='Unprotected (0)', markerfacecolor='#4ECDC4', markersize=10)
@@ -311,7 +313,6 @@ def run_sat_exact_cover(graph, network_name, output_dir="results"):
         graph_to_use = graph
         suffix = ""
 
-    import time
     start_time = time.time()
     mvc_set = solver.solve()
     end_time = time.time()
@@ -476,7 +477,7 @@ if __name__ == "__main__":
     # Ensure results directory exists
     os.makedirs("results", exist_ok=True)
 
-    num_nodes = 20
+    num_nodes = 200
     k = 3
     max_iter = 100
     update_fraction_fictitious = 0.2

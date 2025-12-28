@@ -23,6 +23,7 @@
                 <button class="nav-btn" data-filter="coalitional">Coalitional Game</button>
                 <button class="nav-btn" data-filter="market">Market Simulation</button>
                 <button class="nav-btn" data-filter="vcg">VCG Auction</button>
+                <button class="nav-btn" data-filter="sat">Exact SAT</button>
             </nav>
         </div>
     </header>
@@ -585,6 +586,8 @@
 
             <!-- VCG AUCTION CARDS -->
 
+            <!-- VCG AUCTION CARDS -->
+
             <!-- Regular Graph VCG -->
             <div class="card glass-card" data-category="vcg">
                 <div class="card-header">
@@ -642,7 +645,66 @@
                 </div>
             </div>
 
-            <!-- END MARKET SIMULATION CARD -->
+            <!-- EXACT SAT BENCHMARK CARDS -->
+
+            <!-- Regular Graph SAT -->
+            <div class="card glass-card" data-category="sat">
+                <div class="card-header">
+                    <div class="badge sat" style="background: #9b59b6; color: white;">Regular Graph</div>
+                    <h3>Exact SAT MVC</h3>
+                </div>
+                <div class="card-body">
+                    <div class="view-content active">
+                        <div class="card-image">
+                            <img src="results/Regular_sat_exact.png" alt="SAT Exact Regular" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Optimal MVC found via Symbolic SAT Solver (Ground Truth).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erdos-Renyi SAT -->
+            <div class="card glass-card" data-category="sat">
+                <div class="card-header">
+                    <div class="badge sat" style="background: #9b59b6; color: white;">Erdős-Rényi</div>
+                    <h3>Exact SAT MVC</h3>
+                </div>
+                <div class="card-body">
+                    <div class="view-content active">
+                        <div class="card-image">
+                            <img src="results/Erdos_Renyi_sat_exact.png" alt="SAT Exact Erdos" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Optimal MVC found via Symbolic SAT Solver (Ground Truth).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barabasi-Albert SAT -->
+            <div class="card glass-card" data-category="sat">
+                <div class="card-header">
+                    <div class="badge sat" style="background: #9b59b6; color: white;">Barabasi-Albert</div>
+                    <h3>Exact SAT MVC</h3>
+                </div>
+                <div class="card-body">
+                    <div class="view-content active">
+                        <div class="card-image">
+                            <img src="results/Barabasi_Albert_sat_exact.png" alt="SAT Exact Barabasi" loading="lazy">
+                            <div class="overlay">
+                                <button class="view-btn">View Full</button>
+                            </div>
+                        </div>
+                        <p class="description">Optimal MVC found via Symbolic SAT Solver (Ground Truth).</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- END CARDS -->
 
         </section>
     </main>
