@@ -1,4 +1,5 @@
 import random
+import networkx as nx
 
 class SecurityMarketplace:
     def __init__(self, buyers_nodes, num_vendors=5):
@@ -75,5 +76,92 @@ class SecurityMarketplace:
         for buyer in self.buyers:
             if buyer['id'] not in matched_buyers:
                 matches.append((buyer['id'], None, 0))
-                
+
+        print("Total welfare (limited):", total_welfare)
         return matches, total_welfare
+
+    def run_scenario_optimal_capacity(self):
+            """
+            Scenario a capacità limitata risolto con OTTIMO GLOBALE.
+            Usa l'algoritmo Min-Cost Max-Flow (Network Flow).
+            """
+            # Creiamo un grafo diretto
+
+            G = nx.DiGraph()
+            source_node = 'SOURCE'
+            sink_node = 'SINK'
+            
+            # 1. Aggiungiamo nodi e archi dalla SORGENTE agli ACQUIRENTI
+            # Capacità 1 (ogni acquirente compra max 1 servizio)
+            # Costo 0
+            for buyer in self.buyers:
+                b_node = f"buyer_{buyer['id']}"
+                G.add_edge(source_node, b_node, capacity=1, weight=0)
+                
+            # 2. Aggiungiamo nodi e archi dai VENDITORI al POZZO (SINK)
+            # Capacità = Disponibilità del venditore (Capacity)
+            # Costo 0
+            for vendor in self.vendors:
+                v_node = f"vendor_{vendor['id']}"
+                G.add_edge(v_node, sink_node, capacity=vendor['capacity'], weight=0)
+                
+            # 3. Aggiungiamo gli archi di MATCHING (Acquirente -> Venditore)
+            # Capacità 1
+            # Peso (Weight) = -UTILITÀ (Negativo perché l'algo minimizza il costo)
+            for buyer in self.buyers:
+                for vendor in self.vendors:
+                    util = self.calculate_utility(buyer, vendor)
+                    
+                    # Aggiungiamo l'arco solo se l'acquisto è possibile (budget >= price)
+                    if util > -float('inf'):
+                        b_node = f"buyer_{buyer['id']}"
+                        v_node = f"vendor_{vendor['id']}"
+                        
+                        # Moltiplichiamo per -100 o simile se vogliamo evitare problemi con float,
+                        # ma networkx gestisce bene anche i float. Qui usiamo l'opposto esatto.
+                        G.add_edge(b_node, v_node, capacity=1, weight=-util)
+
+            # 4. Eseguiamo l'algoritmo Min-Cost Max-Flow
+            # Questo trova la configurazione che sposta il massimo numero di utenti
+            # al minor costo possibile (cioè alla massima utilità).
+            try:
+                flow_dict = nx.max_flow_min_cost(G, source_node, sink_node, weight='weight')
+            except nx.NetworkXUnfeasible:
+                print("Nessuna soluzione fattibile trovata.")
+                return [], 0
+
+            # 5. Ricostruiamo i risultati dal flusso calcolato
+            matches = []
+            total_welfare = 0
+            matched_buyer_ids = set()
+
+            # Analizziamo il flusso uscente dai nodi Buyer
+            for buyer in self.buyers:
+                b_node = f"buyer_{buyer['id']}"
+                
+                if b_node in flow_dict:
+                    # Vediamo verso quale venditore è andato il flusso (se c'è)
+                    for potential_vendor, flow_amount in flow_dict[b_node].items():
+                        if flow_amount > 0 and potential_vendor != source_node:
+                            # Abbiamo trovato un match!
+                            # Estrarre l'ID numerico del venditore dalla stringa "vendor_X"
+                            v_id = int(potential_vendor.split('_')[1])
+                            
+                            # Ricalcoliamo l'utilità originale (positiva)
+                            # Nota: dobbiamo recuperare l'oggetto vendor originale
+                            original_vendor = next(v for v in self.vendors if v['id'] == v_id)
+                            real_util = self.calculate_utility(buyer, original_vendor)
+                            
+                            matches.append((buyer['id'], v_id, real_util))
+                            total_welfare += real_util
+                            matched_buyer_ids.add(buyer['id'])
+                            break # Un buyer ha max 1 match
+
+            # Aggiungiamo gli acquirenti rimasti senza match
+            for buyer in self.buyers:
+                if buyer['id'] not in matched_buyer_ids:
+                    matches.append((buyer['id'], None, 0))
+
+
+            print("Total welfare (optimal):", total_welfare)
+            return matches, total_welfare
