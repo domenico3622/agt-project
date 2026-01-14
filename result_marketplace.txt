@@ -1,0 +1,22 @@
+MARKET SIMULATION (Matching) - Regular
+Total welfare (limited, greedy): 9290
+Time taken (limited capacity, greedy): 0.0021076202392578125 seconds
+
+Total welfare (limited, optimal): 9592
+Time taken (limited capacity, optimal): 0.07563114166259766 seconds
+
+
+MARKET SIMULATION (Matching) - Erdos_Renyi
+Total welfare (limited, greedy): 21047
+Time taken (limited capacity, greedy): 0.001024007797241211 seconds
+
+Total welfare (limited, optimal): 21135
+Time taken (limited capacity, optimal): 0.05792498588562012 seconds
+
+
+MARKET SIMULATION (Matching) - Barabasi_Albert
+Total welfare (limited, greedy): 11920
+Time taken (limited capacity, greedy): 0.0006575584411621094 seconds
+
+Total welfare (limited, optimal): 11920
+Time taken (limited capacity, optimal): 0.02197861671447754 seconds
