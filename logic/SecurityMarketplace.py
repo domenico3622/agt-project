@@ -1,5 +1,6 @@
 import random
 import networkx as nx
+from time import time
 
 class SecurityMarketplace:
     def __init__(self, buyers_nodes, num_vendors=5):
@@ -45,6 +46,7 @@ class SecurityMarketplace:
     
     def run_scenario_limited_capacity(self):
         """Limited capacity scenario (Greedy Global Maximization) """
+        start_time_greedy = time()
         possible_matches = []
         for buyer in self.buyers:
             for vendor in self.vendors:
@@ -77,16 +79,18 @@ class SecurityMarketplace:
             if buyer['id'] not in matched_buyers:
                 matches.append((buyer['id'], None, 0))
 
+        end_time_greedy = time()
         print("Total welfare (limited):", total_welfare)
+        print("Time taken (limited capacity, greedy):", end_time_greedy - start_time_greedy, "seconds")
         return matches, total_welfare
-
+    
     def run_scenario_optimal_capacity(self):
             """
             Scenario a capacità limitata risolto con OTTIMO GLOBALE.
             Usa l'algoritmo Min-Cost Max-Flow (Network Flow).
             """
             # Creiamo un grafo diretto
-
+            start_time_optimal = time()
             G = nx.DiGraph()
             source_node = 'SOURCE'
             sink_node = 'SINK'
@@ -162,6 +166,9 @@ class SecurityMarketplace:
                 if buyer['id'] not in matched_buyer_ids:
                     matches.append((buyer['id'], None, 0))
 
+            end_time_optimal = time()
 
-            print("Total welfare (optimal):", total_welfare)
+            print("Total welfare (limited):", total_welfare)
+            print("Time taken (limited capacity, greedy):", end_time_optimal - start_time_optimal, "seconds")
+            
             return matches, total_welfare
