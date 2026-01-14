@@ -3,7 +3,7 @@ import networkx as nx
 from time import time
 
 class SecurityMarketplace:
-    def __init__(self, buyers_nodes, num_vendors=5):
+    def __init__(self, buyers_nodes, num_vendors=8):
         """
         Buyers: Security set nodes with budget.
         Vendors: Sellers with price and quality.
@@ -12,7 +12,7 @@ class SecurityMarketplace:
         self.vendors = [{'id': v, 
                          'price': random.randint(1, 100), 
                          'security_level': random.randint(1, 10),
-                         'capacity': random.randint(20, 150)} for v in range(num_vendors)]
+                         'capacity': random.randint(25, 100)} for v in range(num_vendors)]
 
     def calculate_utility(self, buyer, vendor):
         """Calculate Utility: Welfare = (Security * 10) + Savings """
@@ -170,5 +170,5 @@ class SecurityMarketplace:
 
             print("Total welfare (limited):", total_welfare)
             print("Time taken (limited capacity, greedy):", end_time_optimal - start_time_optimal, "seconds")
-            
+
             return matches, total_welfare
