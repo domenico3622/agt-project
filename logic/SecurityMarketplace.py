@@ -80,7 +80,7 @@ class SecurityMarketplace:
                 matches.append((buyer['id'], None, 0))
 
         end_time_greedy = time()
-        print("Total welfare (limited):", total_welfare)
+        print("Total welfare (limited, greedy):", total_welfare)
         print("Time taken (limited capacity, greedy):", end_time_greedy - start_time_greedy, "seconds")
         return matches, total_welfare
     
@@ -168,7 +168,7 @@ class SecurityMarketplace:
 
             end_time_optimal = time()
 
-            print("Total welfare (limited):", total_welfare)
-            print("Time taken (limited capacity, greedy):", end_time_optimal - start_time_optimal, "seconds")
+            print("Total welfare (limited, optimal):", total_welfare)
+            print("Time taken (limited capacity, optimal):", end_time_optimal - start_time_optimal, "seconds")
 
             return matches, total_welfare

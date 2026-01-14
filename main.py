@@ -445,6 +445,7 @@ def run_market_simulation(final_set, network_name, output_dir="results"):
     # --- Scenario 2: Limited Capacity ---
     print("\nSCENARIO 2: Capacità Limitata (max_items=2)")
     matches_lim, welfare_lim = market.run_scenario_limited_capacity()
+    matches_opt, welfare_opt = market.run_scenario_optimal_capacity()
     
     matched_count_lim = sum(1 for m in matches_lim if m[1] is not None)
     print(f"  Social Welfare Totale: {welfare_lim:.2f}")
