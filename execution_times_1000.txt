@@ -1,0 +1,17 @@
+Algorithm / Graph                                            | Time (s)       
+--------------------------------------------------------------------------------
+Best Response Dynamics (Regular)                             | 0.0419 s
+Batch Fictitious Play (Regular)                              | 0.0674 s
+Regret Matching (Regular)                                    | 0.6532 s
+Coalitional Game (Regular)                                   | 4.2071 s
+Exact SAT MVC (Regular)                                      | 0.1563 s
+Best Response Dynamics (Erdős-Rényi)                         | 0.0510 s
+Batch Fictitious Play (Erdős-Rényi)                          | 0.3420 s
+Regret Matching (Erdős-Rényi)                                | 0.8966 s
+Coalitional Game (Erdős-Rényi)                               | 9.8318 s
+Exact SAT MVC (Erdos_Renyi)                                  | 0.0958 s
+Best Response Dynamics (Barabasi-Albert)                     | 0.0492 s
+Batch Fictitious Play (Barabasi-Albert)                      | 0.0533 s
+Regret Matching (Barabasi-Albert)                            | 0.7527 s
+Coalitional Game (Barabasi-Albert)                           | 4.1929 s
+Exact SAT MVC (Barabasi_Albert)                              | 0.2419 s
