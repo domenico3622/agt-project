@@ -294,7 +294,7 @@ def run_vcg_auction(graph, security_set, network_name, output_dir="results"):
 
 # --- FUNCTION ADDED FOR SAT EXACT SOLVER (TASK 1.b) ---
 def run_sat_exact_cover(graph, network_name, output_dir="results"):
-    print(f"\n[TASK 1.b] EXACT MINIMUM VERTEX COVER (SAT / SYMBOLIC) - {network_name}")
+    print(f"\n[TASK 1.b] EXACT MINIMAL VERTEX COVER (SAT / SYMBOLIC) - {network_name}")
     print("-" * 70)
     
     # Check graph size to avoid hanging
@@ -317,7 +317,7 @@ def run_sat_exact_cover(graph, network_name, output_dir="results"):
     mvc_set = solver.solve()
     end_time = time.time()
     
-    print(f"Exact Minimum Vertex Cover found: Size {len(mvc_set)}")
+    print(f"Exact Minimal Vertex Cover found: Size {len(mvc_set)}")
     print(f"Nodes: {mvc_set}")
     print(f"Time Taken: {end_time - start_time:.4f} seconds")
     

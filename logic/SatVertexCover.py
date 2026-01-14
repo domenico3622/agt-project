@@ -140,7 +140,7 @@ class SatVertexCover:
     def solve(self):
         """
         This is the function that executes the search for the optimal solution.
-        The problem asks for the Minimum Vertex Cover. To find it, it uses Binary Search on the number k (from 0 to N).
+        The problem asks for the Minimal Vertex Cover. To find it, it uses Binary Search on the number k (from 0 to N).
         
         While loop low <= high:
         1. Choose a middle number mid.
@@ -218,7 +218,7 @@ if __name__ == "__main__":
     g.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)])
     # This is a square with a diagonal (1-3).
     # Nodes: 1, 2, 3, 4.
-    # A Minimum Vertex Cover should be of size 2. 
+    # A Minimal Vertex Cover should be of size 2. 
     # Example: {1, 3} covers (1,2), (1,4), (1,3), (2,3), (3,4). Correct.
     
     solver = SatVertexCover(g)
