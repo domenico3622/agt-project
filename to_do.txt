@@ -1,7 +1,7 @@
-1. aggiungi proof task 1
-2. task 3 paragone con optimal max flow e la nostra versione
-3. onlyBestResp.py spiegato FATTO
+1. aggiungi proof task 1 FATTO
+2. task 3 paragone con optimal max flow e la nostra versione FATTO
+3. ScalableBestResponse.py spiegato FATTO
 4. correggi payoff FATTO
-5. aggiungi Characteristic Function
+5. aggiungi Characteristic Function FATTO
 6. correggi local cluster nelle slides FATTO
-7. plot benchmark differenza tra i grafici
+7. plot benchmark differenza tra i grafici FATTO
