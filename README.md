@@ -65,20 +65,19 @@ For a deeper dive into the theoretical background, methodology, and detailed ana
 *   [**Project Report**](report_agt.pdf)
 *   [**Presentation Slides**](slides_agt.pdf)
 
-### 6. High-Performance Simulation (`onlyBestResp.py`)
+### 6. High-Performance Simulation (`ScalableBestResponse.py`)
 Optimized implementation for large-scale networks ($N > 100,000$).
 *   **Tech Stack:** `scipy.sparse` for memory efficiency and `numba` (JIT compilation) for C-like speed.
 *   **Algorithm:** **Best Response Dynamics** (Asynchronous).
 *   **Usage:** Run independent of `main.py` for stress testing.
     ```bash
-    python logic/onlyBestResp.py
+    python logic/ScalableBestResponse.py
     ```
 
 ## File Structure
 * `main.py`: Entry point & Orchestrator.
 * `index.html`: Visualization Dashboard.
 * `logic/`: Core logic modules.
-    *   `onlyBestResp.py`: High-performance standalone simulation.
 * `results/`: Output directory for generated plots.
 * `assets/`: Assets for the dashboard.
 
